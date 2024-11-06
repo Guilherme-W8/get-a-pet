@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import User from '../models/User.js';
+import createUserToken from '../helpers/create-user-token.js';
 
 export default class UserController {
     static async register(request, response) {
@@ -52,7 +53,7 @@ export default class UserController {
         try {
             const createdUser = await user.save();
 
-            return response.status(201).json({ message: 'Usuário criado com sucesso', createdUser });
+            await createUserToken(createdUser, request, response);
         } catch (error) {
             return response.status(500).json({ message: error });
         }
