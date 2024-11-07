@@ -1,5 +1,9 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+
+// Helpers
+import getToken from '../helpers/get-token.js';
 import createUserToken from '../helpers/create-user-token.js';
 
 export default class UserController {
@@ -87,5 +91,22 @@ export default class UserController {
         }
 
         await createUserToken(user, request, response);
+    }
+
+    static async checkUser(request, response) {
+        let currentUser;
+
+        if (request.headers.authorization) {
+            const token = getToken(request);
+            const decoded = jwt.verify(token, 'secret_secret');
+
+            currentUser = await User.findById(decoded.id);
+
+            currentUser.password = undefined;
+        } else {
+            currentUser = null;
+        }
+
+        response.status(200).send(currentUser);
     }
 }
