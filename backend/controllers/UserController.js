@@ -123,4 +123,10 @@ export default class UserController {
 
         return response.status(200).json({ user });
     }
+
+    static async editUser(request, response) {
+        return response.status(200).json({
+            message: 'Atualizado com sucesso'
+        });
+    }
 }
