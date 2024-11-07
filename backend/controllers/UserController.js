@@ -109,4 +109,18 @@ export default class UserController {
 
         response.status(200).send(currentUser);
     }
+
+    static async getUserById(request, response) {
+        const id = request.params.id;
+
+        const user = await User.findById(id).select("-password");
+
+        if (!user) {
+            return response.status(422).json({
+                message: 'Usuário não identificado'
+            });
+        }
+
+        return response.status(200).json({ user });
+    }
 }
