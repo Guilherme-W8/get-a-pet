@@ -58,4 +58,34 @@ export default class UserController {
             return response.status(500).json({ message: error });
         }
     }
+
+    static async login(request, response) {
+        const { email, password } = request.body;
+
+        if (!email) {
+            return response.status(422).json({ message: 'O email precisa ser preenchido' });
+        }
+
+        if (!password) {
+            return response.status(422).json({ message: 'A senha precisa ser preenchida' });
+        }
+
+        // Checando se o usuário existe (email)
+        const user = await User.findOne({ email: email });
+
+        if (!user) {
+            return response.status(422).json({ message: 'Email sem registro' });
+        }
+
+        // Checando se a senha é igual a armazenada no banco de dados
+        const checkPassword = await bcrypt.compare(password, user.password);
+
+        if (!checkPassword) {
+            return response.status(422).json({
+                message: 'Senha inválida'
+            });
+        }
+
+        await createUserToken(user, request, response);
+    }
 }
