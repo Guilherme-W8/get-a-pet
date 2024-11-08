@@ -133,6 +133,12 @@ export default class UserController {
 
         const { name, email, phone, password, confirmpassword } = request.body;
 
+        let image = '';
+
+        if (request.file) {
+            user.image = request.file.filename;
+        }
+
         // Validações
         if (!name) {
             return response.status(422).json({ message: 'O nome precisa ser preenchido' });
