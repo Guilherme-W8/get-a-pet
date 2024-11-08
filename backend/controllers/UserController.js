@@ -5,6 +5,7 @@ import User from '../models/User.js';
 // Helpers
 import getToken from '../helpers/get-token.js';
 import createUserToken from '../helpers/create-user-token.js';
+import getUserByToken from '../helpers/get-user-by-token.js';
 
 export default class UserController {
     static async register(request, response) {
@@ -125,8 +126,58 @@ export default class UserController {
     }
 
     static async editUser(request, response) {
-        return response.status(200).json({
-            message: 'Atualizado com sucesso'
-        });
+        const id = request.params.id;
+
+        const token = getToken(request);
+        const user = await getUserByToken(token);
+
+        const { name, email, phone, password, confirmpassword } = request.body;
+
+        // Validações
+        if (!name) {
+            return response.status(422).json({ message: 'O nome precisa ser preenchido' });
+        }
+
+        user.name = name;
+
+        if (!email) {
+            return response.status(422).json({ message: 'O email precisa ser preenchido' });
+        }
+
+        const emailExists = await User.findOne({ email: email });
+
+        if (user.email !== email && emailExists) {
+            return response.status(422).json({ message: 'Utilize outro email' });
+        }
+
+        user.email = email;
+
+        if (!phone) {
+            return response.status(422).json({ message: 'O número de telefone precisa ser preenchido' });
+        }
+
+        user.phone = phone;
+
+        if (password != confirmpassword) {
+            return response.status(422).json({ message: 'As senhas não conferem' });
+        } else if (password === confirmpassword && password != null) {
+            // Criando senha
+            const salt = await bcrypt.genSalt(12);
+            const passwordHash = await bcrypt.hash(password, salt);
+
+            user.password = passwordHash;
+        }
+
+        try {
+            await User.findOneAndUpdate(
+                { _id: user.id },
+                { $set: user },
+                { new: true }
+            );
+
+            return response.status(200).json({ message: 'Usuário atualizado com sucesso' });
+        } catch (error) {
+            return response.status(500).json({ message: 'Ocorreu um erro' });
+        }
     }
 }
