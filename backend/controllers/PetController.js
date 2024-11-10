@@ -63,4 +63,10 @@ export default class {
             return response.status(500).json({ message: 'Ocorreu um erro', error });
         }
     }
+
+    static async getAll(request, response) {
+        const pets = await Pet.find().sort('-createdAt');
+
+        return response.status(200).json({ pets });
+    }
 }
