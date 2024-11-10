@@ -78,4 +78,13 @@ export default class {
 
         return response.status(200).json({ myPets });
     }
+
+    static async getUserAdoptions(request, response) {
+        const token = getToken(request);
+        const user = getUserByToken(token);
+
+        const adoptPets = await Pet.find({ 'adopter._id': user._id }).sort('-createdAt');
+
+        return response.status(200).json({ adoptPets });
+    }
 }

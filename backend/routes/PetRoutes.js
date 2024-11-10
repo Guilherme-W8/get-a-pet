@@ -11,5 +11,6 @@ const router = express.Router();
 router.post('/create', imageUpload.array('images'), checkToken, PetController.create);
 router.get('/', PetController.getAll);
 router.get('/mypets', checkToken, PetController.getAllUserPets);
+router.get('/myadoptions', checkToken, PetController.getUserAdoptions);
 
 export default router;
