@@ -9,6 +9,7 @@ export default class {
         const available = true;
 
         // Images upload
+        const images = request.files;
 
         // Validação
         if (!name) {
@@ -25,6 +26,10 @@ export default class {
 
         if (!color) {
             return response.status(422).json({ message: 'A cor tem que ser preechida' });
+        }
+
+        if (images.length === 0) {
+            return response.status(422).json({ message: 'Pelo menos uma imagem tem que ser preechida' });
         }
 
         // Pegar usuário do dono do pet
@@ -45,6 +50,10 @@ export default class {
                 image: user.image,
                 phone: user.phone
             }
+        });
+
+        images.map((image) => {
+            pet.images.push(image.filename);
         });
 
         try {
