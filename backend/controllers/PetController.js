@@ -69,4 +69,13 @@ export default class {
 
         return response.status(200).json({ pets });
     }
+
+    static async getAllUserPets(request, response) {
+        const token = getToken(request);
+        const user = await getUserByToken(token);
+
+        const myPets = await Pet.find({ 'user._id': user._id }).sort('-createdAt');
+
+        return response.status(200).json({ myPets });
+    }
 }
