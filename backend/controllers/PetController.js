@@ -1,6 +1,9 @@
+import mongoose from 'mongoose';
 import getToken from '../helpers/get-token.js';
 import getUserByToken from '../helpers/get-user-by-token.js';
 import Pet from '../models/Pet.js';
+
+const ObjectId = mongoose.Types.ObjectId;
 
 export default class {
     static async create(request, response) {
@@ -86,5 +89,25 @@ export default class {
         const adoptPets = await Pet.find({ 'adopter._id': user._id }).sort('-createdAt');
 
         return response.status(200).json({ adoptPets });
+    }
+
+    static async getPetById(request, response) {
+        const id = request.params.id;
+
+        // Checando se ID é válido
+        if (!ObjectId.isValid(id)) {
+            return response.status(422).json({ message: 'ID inválido' });
+        }
+
+        const pet = await Pet.findById(id);
+
+        // Checando se Pet existe
+        if (!pet) {
+            return response.status(404).json({ message: 'Pet não encontrado' });
+        }
+
+        return response.status(200).json({
+            pet
+        });
     }
 }
