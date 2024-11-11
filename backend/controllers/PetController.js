@@ -110,4 +110,32 @@ export default class {
             pet
         });
     }
+
+    static async removePetById(request, response) {
+        const id = request.params.id;
+
+        // Checando se ID é válido
+        if (!ObjectId.isValid(id)) {
+            return response.status(422).json({ message: 'ID inválido' });
+        }
+
+        const pet = await Pet.findById(id);
+
+        // Checando se Pet existe
+        if (!pet) {
+            return response.status(404).json({ message: 'Pet não encontrado' });
+        }
+
+        // Checando se o user logado cadastrou o pet
+        const token = getToken(request);
+        const user = await getUserByToken(token);
+
+        if (pet.user._id.toString() !== user._id.toString()) {
+            return response.status(422).json({ message: 'Erro ao processar solicitação' });
+        }
+
+        await Pet.findByIdAndDelete(id);
+
+        return response.status(200).json({ message: 'Pet removido com sucesso' });
+    }
 }
