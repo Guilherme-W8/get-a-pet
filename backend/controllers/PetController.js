@@ -214,4 +214,46 @@ export default class {
         return response.status(200).json({ message: 'Pet atualizado com sucesso' });
 
     }
+
+    static async schedule(request, response) {
+        const id = request.params.id;
+
+        // Checando se ID é válido
+        if (!ObjectId.isValid(id)) {
+            return response.status(422).json({ message: 'ID inválido' });
+        }
+
+        // Checando se Pet existe
+        const pet = await Pet.findById(id);
+
+        if (!pet) {
+            return response.status(404).json({ message: 'Pet não encontrado' });
+        }
+
+        // Checando se o user logado cadastrou o pet
+        const token = getToken(request);
+        const user = await getUserByToken(token);
+
+        if (pet.user._id.equals(user._id)) {
+            return response.status(422).json({ message: 'Não pode agendar visita com o próprio Pet' });
+        }
+
+        // Checando se o user ja agendou uma visita
+        if (pet.adopter) {
+            if (pet.adopter._id.equals(user._id)) {
+                return response.status(422).json({ message: 'Visita já agendada para este pet' });
+            }
+        }
+
+        // adicionar user para o Pet
+        pet.adopter = {
+            _id: user._id,
+            name: user.name,
+            image: user.image
+        }
+
+        await Pet.findByIdAndUpdate(id, pet);
+
+        return response.status(200).json({ message: `Visita agendada com sucesso. Entre em contato com ${pet.user.name} pelo telefone ${pet.user.phone}` });
+    }
 }
