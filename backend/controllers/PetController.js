@@ -138,4 +138,80 @@ export default class {
 
         return response.status(200).json({ message: 'Pet removido com sucesso' });
     }
+
+    static async updatePet(request, response) {
+        const id = request.params.id;
+
+        const { name, age, weight, color, available } = request.body;
+
+        // Images upload
+        const images = request.files;
+
+        const updatedData = {
+
+        }
+
+        // Checando se ID é válido
+        if (!ObjectId.isValid(id)) {
+            return response.status(422).json({ message: 'ID inválido' });
+        }
+
+        // Checando se Pet existe
+        const pet = await Pet.findById(id);
+
+        if (!pet) {
+            return response.status(404).json({ message: 'Pet não encontrado' });
+        }
+
+
+        // Checando se o user logado cadastrou o pet
+        const token = getToken(request);
+        const user = await getUserByToken(token);
+
+        if (pet.user._id.toString() !== user._id.toString()) {
+            return response.status(422).json({ message: 'Erro ao processar solicitação' });
+        }
+
+        // Validação
+        if (!name) {
+            return response.status(422).json({ message: 'O nome tem que ser preechido' });
+        } else {
+            updatedData.name = name;
+        }
+
+
+        if (!age) {
+            return response.status(422).json({ message: 'A idade tem que ser preechida' });
+        } else {
+            updatedData.age = age;
+        }
+
+        if (!weight) {
+            return response.status(422).json({ message: 'O peso tem que ser preechido' });
+        } else {
+            updatedData.weight = weight;
+        }
+
+
+        if (!color) {
+            return response.status(422).json({ message: 'A cor tem que ser preechida' });
+        } else {
+            updatedData.color = color;
+        }
+
+
+        if (images.length === 0) {
+            return response.status(422).json({ message: 'Pelo menos uma imagem tem que ser preechida' });
+        } else {
+            updatedData.images = [];
+            images.map((image) => {
+                updatedData.images.push(image.filename);
+            });
+        }
+
+        await Pet.findByIdAndUpdate(id, updatedData);
+
+        return response.status(200).json({ message: 'Pet atualizado com sucesso' });
+
+    }
 }
