@@ -256,4 +256,34 @@ export default class {
 
         return response.status(200).json({ message: `Visita agendada com sucesso. Entre em contato com ${pet.user.name} pelo telefone ${pet.user.phone}` });
     }
+
+    static async concludeAdoption(request, response) {
+        const id = request.params.id;
+
+        // Checando se ID é válido
+        if (!ObjectId.isValid(id)) {
+            return response.status(422).json({ message: 'ID inválido' });
+        }
+
+        // Checando se Pet existe
+        const pet = await Pet.findById(id);
+
+        if (!pet) {
+            return response.status(404).json({ message: 'Pet não encontrado' });
+        }
+
+        // Checando se o user logado cadastrou o pet
+        const token = getToken(request);
+        const user = await getUserByToken(token);
+
+        if (pet.user._id.toString() !== user._id.toString()) {
+            return response.status(422).json({ message: 'Erro ao processar solicitação' });
+        }
+
+        pet.available = false;
+
+        await Pet.findByIdAndUpdate(id, pet);
+
+        return response.status(200).json({ message: 'Ciclo de adoção finalizado com sucesso' });
+    }
 }
