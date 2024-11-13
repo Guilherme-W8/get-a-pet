@@ -6,7 +6,21 @@ import { useNavigate } from 'react-router-dom';
 import useFlashMessage from './useFlashMessage';
 
 export default function useAuth() {
+    const [authenticated, setAuthenticated] = useState(false);
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
     const { setFlashMessage } = useFlashMessage();
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+            api.defaults.headers.Authorization = `Bearer ${JSON.parse(token)}`;
+            setAuthenticated(true);
+        }
+
+        setLoading(false)
+    }, []);
 
     async function register(user) {
         let messageText = 'Cadastro realizado com sucesso!';
@@ -17,7 +31,7 @@ export default function useAuth() {
                 return response.data;
             });
 
-            console.log(data);
+            await authUser(data);
         } catch (error) {
             messageText = error.response.data.message;
             messageType = 'error';
@@ -26,5 +40,12 @@ export default function useAuth() {
         setFlashMessage(messageText, messageType);
     }
 
-    return { register };
+    async function authUser(data) {
+        setAuthenticated(true)
+        localStorage.setItem('token', JSON.stringify(data.token));
+
+        navigate('/');
+    }
+
+    return { authenticated, register };
 }
