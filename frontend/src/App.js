@@ -11,18 +11,23 @@ import Home from './components/pages/Home.jsx';
 import Login from './components/pages/Auth/Login.jsx';
 import Register from './components/pages/Auth/Register.jsx';
 
+/* context */
+import { UserProvider } from './context/UserContext.js';
+
 function App() {
   return (
     <Router>
-      <Navbar />
-      <Container>
-        <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/register' element={<Register />} />
-        </Routes>
-      </Container>
-      <Footer />
+      <UserProvider>
+        <Navbar />
+        <Container>
+          <Routes>
+            <Route path='/' element={<Home />} />
+            <Route path='/login' element={<Login />} />
+            <Route path='/register' element={<Register />} />
+          </Routes>
+        </Container>
+        <Footer />
+      </UserProvider>
     </Router>
   );
 }
