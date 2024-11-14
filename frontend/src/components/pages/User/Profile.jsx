@@ -41,7 +41,7 @@ function Profile() {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        let msgType = 'success';
+        let messageType = 'success';
 
         const formData = new FormData();
 
@@ -63,11 +63,11 @@ function Profile() {
                 return response.data;
             })
             .catch((err) => {
-                msgType = 'error';
+                messageType = 'error';
                 return err.response.data;
             })
 
-        setFlashMessage(data.message, msgType);
+        setFlashMessage(data.message, messageType);
     }
 
     return (
