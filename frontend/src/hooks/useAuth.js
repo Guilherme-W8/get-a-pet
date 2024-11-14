@@ -19,7 +19,7 @@ export default function useAuth() {
             setAuthenticated(true);
         }
 
-        setLoading(false)
+        setLoading(false);
     }, []);
 
     async function register(user) {
@@ -41,11 +41,23 @@ export default function useAuth() {
     }
 
     async function authUser(data) {
-        setAuthenticated(true)
+        setAuthenticated(true);
         localStorage.setItem('token', JSON.stringify(data.token));
 
         navigate('/');
     }
 
-    return { authenticated, register };
+    function logout() {
+        const messageText = 'Logout realizado com sucesso!';
+        const messageType = 'success';
+
+        setAuthenticated(false);
+        localStorage.removeItem('token');
+        api.defaults.headers.Authorization = undefined;
+        navigate('/login');
+
+        setFlashMessage(messageText, messageType);
+    }
+
+    return { authenticated, loading, register, logout };
 }
