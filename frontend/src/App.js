@@ -13,7 +13,7 @@ import Login from './components/pages/Auth/Login.jsx';
 import Register from './components/pages/Auth/Register.jsx';
 import Profile from './components/pages/User/Profile.jsx';
 import MyPets from './components/pages/Pet/MyPets.jsx';
-// import AddPet from './components/pages/Pet/AddPet.jsx';             <Route path='/pet/add' element={<AddPet />}></Route>
+import AddPet from './components/pages/Pet/AddPet.jsx';
 
 /* context */
 import { UserProvider } from './context/UserContext.js';
@@ -31,6 +31,7 @@ function App() {
             <Route path='/register' element={<Register />} />
             <Route path='/user/profile' element={<Profile />}></Route>
             <Route path='/pet/mypets' element={<MyPets />}></Route>
+            <Route path='/pet/add' element={<AddPet />}></Route>
           </Routes>
         </Container>
         <Footer />
