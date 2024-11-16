@@ -41,17 +41,18 @@ function AddPet() {
                 },
             })
             .then((response) => {
-                console.log(response.data);
                 return response.data;
             })
             .catch((err) => {
-                console.log(err);
                 messageType = 'error';
                 return err.response.data;
             });
 
         setFlashMessage(data.message, messageType);
-        navigate('/pet/mypets');
+
+        if (messageType !== 'error') {
+            navigate('/pet/mypets');
+        }
     }
 
     return (
