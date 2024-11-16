@@ -91,7 +91,7 @@ function MyPets() {
                                 alt={pet.name}
                                 width="px75"
                             />
-                            <span className="bold">{pet.name}</span>
+                            <span>{pet.name}</span>
                             <div className={styles.actions}>
                                 {pet.available ? (
                                     <>
@@ -104,11 +104,7 @@ function MyPets() {
                                             </button>
                                         )}
                                         <Link to={`/pet/edit/${pet._id}`}>Editar</Link>
-                                        <button
-                                            onClick={() => removePet(pet._id)}
-                                        >
-                                            Excluir
-                                        </button>
+                                        <button onClick={() => removePet(pet._id)}>Excluir</button>
                                     </>
                                 ) : (
                                     <p>Pet já adotado</p>
