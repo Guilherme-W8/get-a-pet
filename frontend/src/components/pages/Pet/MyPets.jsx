@@ -11,6 +11,8 @@ function MyPets() {
     const { setFlashMessage } = useFlashMessage();
 
     useEffect(() => {
+        let isMounted = true; // Controle para evitar atualizações após desmontagem
+
         api
             .get('/pets/mypets', {
                 headers: {
@@ -18,17 +20,19 @@ function MyPets() {
                 },
             })
             .then((response) => {
-                // Verificação para garantir que response.data.pets seja um array
-                if (Array.isArray(response.data.pets)) {
-                    setPets(response.data.pets);
-                } else {
-                    setPets([]); // Defina como vazio se não for um array
+                if (isMounted) {
+                    if (Array.isArray(response.data.myPets)) {
+                        setPets(response.data.myPets);
+                    } else {
+                        setPets([]);
+                    }
                 }
-            })
-            .catch((err) => {
-                setFlashMessage('Erro ao carregar pets', 'error');
             });
-    }, [token, setFlashMessage]);
+
+        return () => {
+            isMounted = false; // Limpeza na desmontagem
+        };
+    }, [token]);
 
     async function removePet(id) {
         let messageType = 'success';
