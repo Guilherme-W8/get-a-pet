@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router-dom';
 
 import styles from './AddPet.module.css';
 
+/* components */
+import PetForm from '../../form/PetForm.jsx';
+
 /* hooks */
 import useFlashMessage from '../../../hooks/useFlashMessage';
 
@@ -57,6 +60,7 @@ function AddPet() {
                 <h1>Cadastre um Pet</h1>
                 <p>Depois ele ficará disponível para adoção</p>
             </div>
+            <PetForm handleSubmit={registerPet} btnText="Cadastrar" />
         </section>
     );
 }
