@@ -200,9 +200,7 @@ export default class {
         }
 
 
-        if (images.length === 0) {
-            return response.status(422).json({ message: 'Pelo menos uma imagem tem que ser preechida' });
-        } else {
+        if (images.length > 0) {
             updatedData.images = [];
             images.map((image) => {
                 updatedData.images.push(image.filename);
