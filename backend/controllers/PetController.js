@@ -84,7 +84,7 @@ export default class {
 
     static async getUserAdoptions(request, response) {
         const token = getToken(request);
-        const user = getUserByToken(token);
+        const user = await getUserByToken(token);
 
         const adoptPets = await Pet.find({ 'adopter._id': user._id }).sort('-createdAt');
 
@@ -199,6 +199,11 @@ export default class {
             updatedData.color = color;
         }
 
+        if (!available) {
+            return response.status(422).json({ message: 'O status é obrigatório!' });
+        } else {
+            updatedData.available = available;
+        }
 
         if (images.length > 0) {
             updatedData.images = [];
